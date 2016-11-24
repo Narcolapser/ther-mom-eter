@@ -1,48 +1,36 @@
-#include <Stepper.h>
+#include <EEPROM.h>
+#include "driver.h"
 
-const int stepsPerRevolution = 1024;  // change this to fit the number of steps per revolution
-// for your motor
+Driver driver(15,13,12, 14);
 
-// initialize the stepper library on pins 8 through 11:
-Stepper myStepper(stepsPerRevolution, 16, 4, 5, 0);
-int stepCount = 0;         // number of steps the motor has taken
-
-void setup() {
-  // initialize the serial port:
-  Serial.begin(9600);
-  myStepper.setSpeed(10);
-  Serial.print("All setup.");
-}
-
-void loop() {
-  move(0,512);
-  delay(1000);
-  move(512,0);
-  delay(1000);
-}
-
-void move(int from, int to)
+void setup() 
 {
-  int val = to - from;
-  if (val > 0)
-  {
-    while(val > 128)
-    {
-      myStepper.step(128);
-      val -= 128;
-      delay(5);
-    }
-    myStepper.step(val);
-  }
-  else if (val < 0)
-  {
-    while(val < -128)
-    {
-      myStepper.step(-128);
-      val += 128;
-      delay(5);
-    }
-    myStepper.step(val);
-  }
+  Serial.begin(9800);
+  Serial.println("Setup is done.");
+  EEPROM.begin(512);
+  //EEPROM.write(1,85);
+  EEPROM.write(1,0);
+  EEPROM.commit();
+  pinMode(15, OUTPUT);
+  pinMode(13, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(14, OUTPUT);
+  Serial.println(EEPROM.read(1));
+  driver.load(1);
 }
 
+void loop() 
+{
+  Serial.println("LOOP!");
+
+  //Serial.print((driver.a || driver.b || driver.c || driver.d));
+  Serial.print(driver.a);
+  Serial.print(driver.b);
+  Serial.print(driver.c);
+  Serial.println(driver.d);
+  //Serial.println(driver.dir);
+  //Serial.println(driver.save(1));
+  
+  delay(1000);
+  driver.steps(1024);
+}
