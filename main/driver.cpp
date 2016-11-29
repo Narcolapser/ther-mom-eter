@@ -1,6 +1,7 @@
 #include <EEPROM.h>
 #include "driver.h"
 #include "Arduino.h"
+
 Driver::Driver(int pin_a, int pin_b, int pin_c, int pin_d)
 {
   this->a = 0;
@@ -132,20 +133,10 @@ void Driver::steps(int val)
     this->single_step();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void Driver::off()
+{
+  digitalWrite(this->pin_a,LOW);
+  digitalWrite(this->pin_b,LOW);
+  digitalWrite(this->pin_c,LOW);
+  digitalWrite(this->pin_d,LOW);
+}

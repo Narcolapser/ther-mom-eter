@@ -1,5 +1,7 @@
 #include <EEPROM.h>
-#include "driver.h"
+//#include "driver.h"
+#include "web.h"
+#include "dial.h"
 
 Driver driver(15,13,12, 14);
 
@@ -17,6 +19,7 @@ void setup()
   pinMode(14, OUTPUT);
   Serial.println(EEPROM.read(1));
   driver.load(1);
+  setup_web();
 }
 
 void loop() 
@@ -31,6 +34,10 @@ void loop()
   //Serial.println(driver.dir);
   //Serial.println(driver.save(1));
   
-  delay(1000);
   driver.steps(1024);
+  driver.off();
+  Serial.println("Fetching...");
+  Serial.println(getTemp(TM));
+  Serial.println("Fetched.");
+  delay(1000000);
 }

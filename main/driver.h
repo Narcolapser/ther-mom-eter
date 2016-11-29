@@ -1,4 +1,8 @@
 #include <EEPROM.h>
+
+#ifndef DRIVER_H
+#define DRIVER_H
+
 class Driver
 {
   public:
@@ -17,5 +21,8 @@ class Driver
   void load(int addr);
   void update_coils();
   int save(int addr);
+  void off();
   
 };
+
+#endif
