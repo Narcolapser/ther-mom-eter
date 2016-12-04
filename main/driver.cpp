@@ -12,6 +12,12 @@ Driver::Driver(int pin_a, int pin_b, int pin_c, int pin_d)
   this->pin_b = pin_b;
   this->pin_c = pin_c;
   this->pin_d = pin_d;
+  
+  pinMode(pin_a, OUTPUT);
+  pinMode(pin_b, OUTPUT);
+  pinMode(pin_c, OUTPUT);
+  pinMode(pin_d, OUTPUT);
+  
   this->dir = 0;
 };
 
@@ -33,7 +39,6 @@ int Driver::save(int addr)
       (2 * this->b) + 
       this->a;
   EEPROM.write(addr,val);
-  EEPROM.commit();
   return val;
 }
 
@@ -129,6 +134,13 @@ void Driver::update_coils()
 }
 void Driver::steps(int val)
 {
+  if (val < 0)
+  {
+    this->dir = 1;
+    val *= -1;
+  }
+  else
+    this->dir = 0;
   while(val --> 0)
     this->single_step();
 }
