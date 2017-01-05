@@ -4,19 +4,28 @@
 #include "dial.h"
 
 //Dial dial(15,13,12,14,30);
-Dial dial(2,0,5,16,30);
+Dial dialMB(2,0,5,16,50);
 byte x = 0;
 int val = 0;
+int steps = 0;
 
 void setup() 
 {
+  dialMB.save(0);
   Serial.begin(9800);
   Serial.println("Setup begun.");
+  Serial.println("Temp:");
+  Serial.println(String(dialMB.temp));
   EEPROM.begin(512);
   //EEPROM.write(1,85);
-  EEPROM.write(1,0);
-  EEPROM.commit();
-  //dial.load(0);
+  //EEPROM.write(1,0);
+  //EEPROM.commit();
+  Serial.println(dialMB.getSign(dialMB.temp));
+  Serial.println(dialMB.getCen(dialMB.temp));
+  Serial.println(dialMB.getDec(dialMB.temp));
+  Serial.println(dialMB.getMono(dialMB.temp));
+  dialMB.load(0);
+  Serial.println("Reading EEPROM:");
   Serial.println(EEPROM.read(0));
   Serial.println(EEPROM.read(1));
   Serial.println(EEPROM.read(2));
@@ -24,10 +33,12 @@ void setup()
   Serial.println(EEPROM.read(4));
   Serial.println(EEPROM.read(5));
   Serial.println("Motor pins:");
-  Serial.println(dial.driver->pin_a);
-  Serial.println(dial.driver->pin_b);
-  Serial.println(dial.driver->pin_c);
-  Serial.println(dial.driver->pin_d);
+  Serial.println(dialMB.driver->pin_a);
+  Serial.println(dialMB.driver->pin_b);
+  Serial.println(dialMB.driver->pin_c);
+  Serial.println(dialMB.driver->pin_d);
+  Serial.println("Temp:");
+  Serial.println(dialMB.temp);
   setup_web();
   randomSeed(analogRead(0));
   pinMode(4, INPUT);
@@ -35,22 +46,35 @@ void setup()
   while(digitalRead(4))
   {
     Serial.println("Calibrating up 1 degree");
-    dial.calibrate(10);
+    dialMB.calibrate(10);
     delay(500);
   }
   Serial.println("Setup is done.");
+//  Serial.println(getTemp(MB));
+//  Serial.println(getTemp(TM));
+//  Serial.println(getTemp(BJ));
+//  Serial.println(getTemp(NA));
+//  Serial.println(getTemp(EG));
+//  Serial.println(getTemp(KA));
 }
 
 void loop() 
 {
+  delay(2000);
   val = random(140)-40;
   Serial.print("Temp was: ");
-  Serial.print(dial.temp);
+  Serial.print(dialMB.temp);
   Serial.print(" am now setting it to: ");
   Serial.print(val);
   Serial.print(" moving by: ");
-  Serial.println((val - dial.temp)*10);
-  dial.newTemp(val);
-  dial.save(0);
-  delay(5000);
+  Serial.println((val - dialMB.temp)*10);
+  dialMB.newTemp(val);
+  dialMB.save(0);
+  delay(3000);
+//  if(digitalRead(4))
+//  {
+//    Serial.println(++steps);
+//    dialMB.calibrate(1);
+//  }
+//  delay(50);
 }
