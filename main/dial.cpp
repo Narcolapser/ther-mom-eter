@@ -32,6 +32,13 @@ void Dial::newTemp(int temp)
 {
   this->driver->steps((temp - this->temp)*this->step_factor);
   this->temp = temp;
+  this->driver->off();
+}
+void Dial::setTemp(int temp)
+{
+  Serial.print("Setting temp to:");
+  Serial.println(temp);
+  this->temp = temp;
 }
 void Dial::calibrate(int adjustment)
 {

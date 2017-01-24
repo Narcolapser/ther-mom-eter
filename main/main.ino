@@ -3,52 +3,59 @@
 #include "web.h"
 #include "dial.h"
 
-//Dial dial(15,13,12,14,30);
+Dial dialNA(15,13,12,14,30);
 Dial dialMB(2,0,5,16,50);
 byte x = 0;
 int val = 0;
 int steps = 0;
+int update_delay = 5000;
+int last_update = millis();
+
+void handleMB() {
+  String message = "Micah and Becca handler.\n\n";
+  message += "URI: ";
+  message += server.uri();
+  message += "\nMethod: ";
+  message += ( server.method() == HTTP_GET ) ? "GET" : "POST";
+  message += "\nArguments: ";
+  message += server.args();
+  message += "\n";
+
+  for ( uint8_t i = 0; i < server.args(); i++ ) {
+    message += " " + server.argName ( i ) + ": " + server.arg ( i ) + "\n";
+  }
+
+  dialMB.setTemp(atoi(server.arg(0).c_str()));
+
+  server.send ( 200, "text/plain", message );
+}
+
+void handleNA() {
+  String message = "Natalia handler.\n\n";
+
+  for ( uint8_t i = 0; i < server.args(); i++ ) {
+    message += " " + server.argName ( i ) + ": " + server.arg ( i ) + "\n";
+  }
+
+  dialNA.setTemp(atoi(server.arg(0).c_str()));
+
+  server.send ( 200, "text/plain", message );
+}
+
 
 void setup() 
 {
-  dialMB.save(0);
   Serial.begin(9800);
-  Serial.println("Setup begun.");
-  Serial.println("Temp:");
-  Serial.println(String(dialMB.temp));
   EEPROM.begin(512);
-  //EEPROM.write(1,85);
-  //EEPROM.write(1,0);
-  //EEPROM.commit();
-  Serial.println(dialMB.getSign(dialMB.temp));
-  Serial.println(dialMB.getCen(dialMB.temp));
-  Serial.println(dialMB.getDec(dialMB.temp));
-  Serial.println(dialMB.getMono(dialMB.temp));
+  
   dialMB.load(0);
-  Serial.println("Reading EEPROM:");
-  Serial.println(EEPROM.read(0));
-  Serial.println(EEPROM.read(1));
-  Serial.println(EEPROM.read(2));
-  Serial.println(EEPROM.read(3));
-  Serial.println(EEPROM.read(4));
-  Serial.println(EEPROM.read(5));
-  Serial.println("Motor pins:");
-  Serial.println(dialMB.driver->pin_a);
-  Serial.println(dialMB.driver->pin_b);
-  Serial.println(dialMB.driver->pin_c);
-  Serial.println(dialMB.driver->pin_d);
-  Serial.println("Temp:");
-  Serial.println(dialMB.temp);
+  dialNA.load(10);
+
   setup_web();
+  server.on("/MB", handleMB);
+  server.on("/NA", handleNA);
   randomSeed(analogRead(0));
-  pinMode(4, INPUT);
-  delay(100);
-  while(digitalRead(4))
-  {
-    Serial.println("Calibrating up 1 degree");
-    dialMB.calibrate(10);
-    delay(500);
-  }
+
   Serial.println("Setup is done.");
 //  Serial.println(getTemp(MB));
 //  Serial.println(getTemp(TM));
@@ -60,8 +67,7 @@ void setup()
 
 void loop() 
 {
-  delay(2000);
-  val = random(140)-40;
+  val = random(140)-20;
   Serial.print("Temp was: ");
   Serial.print(dialMB.temp);
   Serial.print(" am now setting it to: ");
@@ -70,11 +76,10 @@ void loop()
   Serial.println((val - dialMB.temp)*10);
   dialMB.newTemp(val);
   dialMB.save(0);
-  delay(3000);
-//  if(digitalRead(4))
-//  {
-//    Serial.println(++steps);
-//    dialMB.calibrate(1);
-//  }
-//  delay(50);
+  dialNA.newTemp(val);
+  dialNA.save(10);
+  last_update = millis();
+  while (millis() - last_update < update_delay)
+    server.handleClient();
+
 }

@@ -1,7 +1,15 @@
 #include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
 #include <ESP8266WiFiMulti.h>
 
 #include <ESP8266HTTPClient.h>
+
+#include "Arduino.h"
+
+ESP8266WebServer server(80);
+
 
 const char* MB = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/NV/nellis_AFB.json";
 const char* TM = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/SD/Vermillion.json";
@@ -12,9 +20,71 @@ const char* KA = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/
 
 ESP8266WiFiMulti WiFiMulti;
 
+
+void handleRoot() {
+  server.send(200, "text/plain", "hello from esp8266!");
+}
+
+//void handleMB() {
+//  String message = "Micah and Becca handler.\n\n";
+//  message += "URI: ";
+//  message += server.uri();
+//  message += "\nMethod: ";
+//  message += ( server.method() == HTTP_GET ) ? "GET" : "POST";
+//  message += "\nArguments: ";
+//  message += server.args();
+//  message += "\n";
+//
+//  for ( uint8_t i = 0; i < server.args(); i++ ) {
+//    message += " " + server.argName ( i ) + ": " + server.arg ( i ) + "\n";
+//  }
+//
+//  server.send ( 404, "text/plain", message );
+//}
+
+void handleNotFound(){
+  String message = "File Not Found\n\n";
+  message += "URI: ";
+  message += server.uri();
+  message += "\nMethod: ";
+  message += (server.method() == HTTP_GET)?"GET":"POST";
+  message += "\nArguments: ";
+  message += server.args();
+  message += "\n";
+  for (uint8_t i=0; i<server.args(); i++){
+    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+  }
+  server.send(404, "text/plain", message);
+}
+
+
 void setup_web()
 {
+  Serial.print("setting up web stuff.");
   WiFiMulti.addAP("ArchNet", "nospacesorcaps");
+  WiFi.begin("ArchNet", "nospacesorcaps");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  if (MDNS.begin("esp8266")) {
+    Serial.println("MDNS responder started");
+  }
+
+  server.on("/", handleRoot);
+
+
+//  server.on("/MB", handleMB);
+   
+
+  server.onNotFound(handleNotFound);
+
+  server.begin();
 }
 
 String getPayload(const char* loc)
