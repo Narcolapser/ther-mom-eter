@@ -11,18 +11,18 @@
 ESP8266WebServer server(80);
 
 
-const char* MB = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/NV/nellis_AFB.json";
-const char* TM = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/SD/Vermillion.json";
-const char* BJ = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/decorah.json";
-const char* NA = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/humboldt.json";
-const char* EG = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/west_Des_Moines.json";
-const char* KA = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/pella.json";
+const char* MB_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/NV/nellis_AFB.json";
+const char* TM_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/SD/Vermillion.json";
+const char* BJ_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/decorah.json";
+const char* NA_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/humboldt.json";
+const char* EG_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/west_Des_Moines.json";
+const char* KA_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/pella.json";
 
 ESP8266WiFiMulti WiFiMulti;
 
 
 void handleRoot() {
-  server.send(200, "text/plain", "hello from esp8266!");
+  server.send(200, "text/plain", "hello from ther-mom-eter!");
 }
 
 //void handleMB() {

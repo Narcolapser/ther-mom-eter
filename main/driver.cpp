@@ -2,7 +2,7 @@
 #include "driver.h"
 #include "Arduino.h"
 
-Driver::Driver(int pin_a, int pin_b, int pin_c, int pin_d)
+Driver::Driver(int pin_a, int pin_b, int pin_c, int pin_d, pin_t loc)
 {
   this->a = 0;
   this->b = 0;
@@ -12,11 +12,15 @@ Driver::Driver(int pin_a, int pin_b, int pin_c, int pin_d)
   this->pin_b = pin_b;
   this->pin_c = pin_c;
   this->pin_d = pin_d;
-  
-  pinMode(pin_a, OUTPUT);
-  pinMode(pin_b, OUTPUT);
-  pinMode(pin_c, OUTPUT);
-  pinMode(pin_d, OUTPUT);
+  this->loc = loc;
+
+  if (loc == P_LOCAL)
+  {
+    pinMode(pin_a, OUTPUT);
+    pinMode(pin_b, OUTPUT);
+    pinMode(pin_c, OUTPUT);
+    pinMode(pin_d, OUTPUT);
+  }
   
   this->dir = 0;
 };
@@ -114,21 +118,21 @@ void Driver::single_step()
 void Driver::update_coils()
 {
   if(this->a)
-    digitalWrite(this->pin_a,HIGH);
+    this->pinWrite(this->pin_a,HIGH);
   else
-    digitalWrite(this->pin_a,LOW);
+    this->pinWrite(this->pin_a,LOW);
   if(this->b)
-    digitalWrite(this->pin_b,HIGH);
+    this->pinWrite(this->pin_b,HIGH);
   else
-    digitalWrite(this->pin_b,LOW);
+    this->pinWrite(this->pin_b,LOW);
   if(this->c)
-    digitalWrite(this->pin_c,HIGH);
+    this->pinWrite(this->pin_c,HIGH);
   else
-    digitalWrite(this->pin_c,LOW);
+    this->pinWrite(this->pin_c,LOW);
   if(this->d)
-    digitalWrite(this->pin_d,HIGH);
+    this->pinWrite(this->pin_d,HIGH);
   else
-    digitalWrite(this->pin_d,LOW);
+    this->pinWrite(this->pin_d,LOW);
   
   delay(5);
 }
@@ -147,8 +151,22 @@ void Driver::steps(int val)
 
 void Driver::off()
 {
-  digitalWrite(this->pin_a,LOW);
-  digitalWrite(this->pin_b,LOW);
-  digitalWrite(this->pin_c,LOW);
-  digitalWrite(this->pin_d,LOW);
+  this->pinWrite(this->pin_a,LOW);
+  this->pinWrite(this->pin_b,LOW);
+  this->pinWrite(this->pin_c,LOW);
+  this->pinWrite(this->pin_d,LOW);
 }
+
+void Driver::pinWrite(int pin, int state)
+{
+  if(this->loc == P_LOCAL)
+    digitalWrite(pin,state);
+  else
+  {
+    if (state == HIGH)
+      pin += 100;
+    Serial.println(pin);
+  }
+  
+}
+

@@ -1,4 +1,5 @@
 #include "driver.h"
+#include "pin_t.h"
 #include <EEPROM.h>
 #include "Arduino.h"
 
@@ -8,7 +9,7 @@ class Dial
     int temp;
     int step_factor;
     Driver *driver;
-    Dial(int pin_a, int pin_b, int pin_c, int pin_d, int temp); 
+    Dial(int pin_a, int pin_b, int pin_c, int pin_d, int temp, pin_t loc); 
     Dial(); 
     void save(int loc);
     void load(int loc);

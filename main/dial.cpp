@@ -1,9 +1,8 @@
 #include "dial.h"
 
-
-Dial::Dial(int pin_a, int pin_b, int pin_c, int pin_d, int temp)
+Dial::Dial(int pin_a, int pin_b, int pin_c, int pin_d, int temp,pin_t loc)
 {
-  this->driver = new Driver(pin_a, pin_b, pin_c, pin_d);
+  this->driver = new Driver(pin_a, pin_b, pin_c, pin_d, loc);
   this->temp = temp;
   this->step_factor = 11;
 }
@@ -30,7 +29,8 @@ void Dial::save(int loc)
 }
 void Dial::newTemp(int temp)
 {
-  this->driver->steps((temp - this->temp)*this->step_factor);
+  int dist = (temp - this->temp) % 140;
+  this->driver->steps(dist*this->step_factor);
   this->temp = temp;
   this->driver->off();
 }
