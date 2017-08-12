@@ -38,7 +38,9 @@ void Dial::setTemp(int temp)
 {
   Serial.print("Setting temp to:");
   Serial.println(temp);
+  int temptemp = this->temp;
   this->temp = temp;
+  this->newTemp(temptemp);
 }
 void Dial::calibrate(int adjustment)
 {

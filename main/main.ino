@@ -3,17 +3,20 @@
 #include "web.h"
 #include "dial.h"
 
-Dial dialKA(16,0,5,4,50,P_LOCAL);
+//wasn't working. I think the pins were in the wrong order, but I've moved on now.
+//Dial dialKA(16, 0, 5, 4,50,P_LOCAL);
+Dial dialKA(0, 4, 5, 2, 50,P_LOCAL);
 Dial dialEG(15,13,12,14,50,P_LOCAL);
 Dial dialNA(5,4,3,2,50,P_REMOTE);
-Dial dialBJ(14,15,16,17,50,P_REMOTE);
+Dial dialBJ(17,16,15,14,50,P_REMOTE);
 Dial dialTM(10,11,12,13,50,P_REMOTE);
 Dial dialMB(9,8,7,6,50,P_REMOTE);
 
 byte x = 0;
 int val = 0;
 int steps = 0;
-int update_delay = 5000;
+//int update_delay = 1000;
+int update_delay = 1000 * 60 * 30; //1000 ms 60 seconds 30 minutes. 48 refreshes a day.
 int last_update = millis();
 
 void handleStatus(){
@@ -89,7 +92,7 @@ void handleMB() {
 
 void setup() 
 {
-  Serial.begin(9800);
+  Serial.begin(115200);
   EEPROM.begin(512);
   
   dialKA.load(0);
@@ -110,19 +113,40 @@ void setup()
   
   randomSeed(analogRead(0));
 
+  Serial.println("running diagnostics");
+  delay(5000);
+
+  dialKA.newTemp(0);
+  dialEG.newTemp(0);
+  dialNA.newTemp(0);
+  dialBJ.newTemp(0);
+  dialTM.newTemp(0);
+  dialMB.newTemp(0);
+
   Serial.println("Setup is done.");
 
 }
 
 void loop() 
 {
-  val = random(20);
-  dialKA.newTemp(val);
-  dialEG.newTemp(val);
-  dialNA.newTemp(val);
-  dialBJ.newTemp(val);
-  dialTM.newTemp(val);
-  dialMB.newTemp(val);
+  float temp = getTemp(KA_url);
+  //float temp = 68;
+  dialKA.newTemp(temp);
+  temp = getTemp(EG_url);
+  //temp = 73;
+  dialEG.newTemp(temp);
+  temp = getTemp(NA_url);
+  //temp = 64;
+  dialNA.newTemp(temp);
+  temp = getTemp(BJ_url);
+  //temp = 72;
+  dialBJ.newTemp(temp);
+  temp = getTemp(TM_url);
+  //temp = 64;
+  dialTM.newTemp(temp);
+  temp = getTemp(MB_url);
+  //temp = 86;
+  dialMB.newTemp(temp);
   
   dialKA.save(0);
   dialEG.save(5);
@@ -135,4 +159,7 @@ void loop()
   while (millis() - last_update < update_delay)
     server.handleClient();
 
+
+//  dialKA.driver->steps(1);
+//  delay(500);
 }
