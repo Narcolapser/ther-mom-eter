@@ -16,7 +16,7 @@ const char* TM_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/condition
 const char* BJ_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/decorah.json";
 const char* NA_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/humboldt.json";
 const char* EG_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/west_Des_Moines.json";
-const char* KA_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/IA/pella.json";
+const char* KA_url = "http://api.wunderground.com/api/b3d8129648ddfcc6/conditions/q/WI/washburn.json";
 
 ESP8266WiFiMulti WiFiMulti;
 
@@ -24,23 +24,6 @@ ESP8266WiFiMulti WiFiMulti;
 void handleRoot() {
   server.send(200, "text/plain", "hello from ther-mom-eter!");
 }
-
-//void handleMB() {
-//  String message = "Micah and Becca handler.\n\n";
-//  message += "URI: ";
-//  message += server.uri();
-//  message += "\nMethod: ";
-//  message += ( server.method() == HTTP_GET ) ? "GET" : "POST";
-//  message += "\nArguments: ";
-//  message += server.args();
-//  message += "\n";
-//
-//  for ( uint8_t i = 0; i < server.args(); i++ ) {
-//    message += " " + server.argName ( i ) + ": " + server.arg ( i ) + "\n";
-//  }
-//
-//  server.send ( 404, "text/plain", message );
-//}
 
 void handleNotFound(){
   String message = "File Not Found\n\n";
@@ -61,8 +44,8 @@ void handleNotFound(){
 void setup_web()
 {
   Serial.print("setting up web stuff.");
-  WiFiMulti.addAP("ArchNet", "nospacesorcaps");
-  WiFi.begin("ArchNet", "nospacesorcaps");
+  WiFiMulti.addAP("Alpha Phi Guest", "Psi1920");
+  WiFi.begin("Alpha Phi Guest", "Psi1920");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
